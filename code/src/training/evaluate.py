@@ -79,7 +79,7 @@ def plot_reliability(centres, accs, freqs, ece: float, name: str, split: str, ou
                zorder=3, label="bin (size $\\propto$ # samples)")
     ax.set_xlim(0, 1); ax.set_ylim(0, 1)
     ax.set_xlabel("predicted confidence"); ax.set_ylabel("empirical accuracy")
-    ax.set_title(f"Reliability — {name} ({split})  ·  ECE = {ece:.3f}", fontweight="bold")
+    ax.set_title(f"Reliability - {name} ({split})  ·  ECE = {ece:.3f}", fontweight="bold")
     ax.legend(loc="upper left", fontsize=9); ax.grid(alpha=0.3)
     plt.tight_layout(); fig.savefig(out_path, dpi=150, facecolor="white"); plt.close(fig)
 

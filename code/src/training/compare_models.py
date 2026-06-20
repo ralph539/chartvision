@@ -69,7 +69,7 @@ def main() -> None:
                 fontsize=9, fontweight="bold", color=col)
     ax.set_xticks(x); ax.set_xticklabels(classes, rotation=15, ha="right", fontsize=9)
     ax.set_ylim(0, 1.10); ax.set_ylabel("F1 score")
-    ax.set_title(f"Per-class F1 — baseline vs ResNet18 ({args.split} split)", fontweight="bold")
+    ax.set_title(f"Per-class F1 - baseline vs ResNet18 ({args.split} split)", fontweight="bold")
     for s in ("top", "right"): ax.spines[s].set_visible(False)
     ax.grid(axis="y", linestyle=":", alpha=0.5); ax.set_axisbelow(True)
     ax.legend(frameon=False, fontsize=9, loc="upper left")

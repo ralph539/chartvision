@@ -15,7 +15,7 @@ compared: a small from-scratch CNN and a ResNet18 with transfer learning.
 | `double_top` | reversal | bearish |
 | `double_bottom` | reversal | bullish |
 | `bull_flag` | continuation | bullish |
-| `no_pattern` | negative | — |
+| `no_pattern` | negative | n/a |
 
 ## Repository layout
 
@@ -34,12 +34,12 @@ src/
   training/   train, evaluate, compare_models, gradcam
   inference/  prediction helpers
   utils/      config, seeding
-configs/      default.yaml — single source of truth (paths, tickers, seeds, hyper-params)
+configs/      default.yaml: single source of truth (paths, tickers, seeds, hyper-params)
 tests/        pytest unit tests for the rule labelers
 make_*.py     figure / slide-asset generation scripts
 ```
 
-Raw/processed data, model checkpoints, and generated figures are not committed — they are
+Raw/processed data, model checkpoints, and generated figures are not committed; they are
 reproduced by the pipeline.
 
 ## Setup
@@ -68,4 +68,4 @@ pytest
 
 ---
 
-Computer Vision Short Project — Master in Innovation and Research in Informatics, FIB UPC.
+Computer Vision Short Project, Master in Innovation and Research in Informatics, FIB UPC.

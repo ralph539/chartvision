@@ -123,7 +123,7 @@ def render_grid(picked, classes, model_name: str, mode: str, n_per_class: int, o
                 ax_cam.set_title(label, fontsize=7)
             ax_img.axis("off"); ax_cam.axis("off")
         axes[r, 0].set_ylabel(classes[c], rotation=0, ha="right", va="center", fontsize=9, labelpad=42)
-    title = f"Grad-CAM — {model_name} ({mode})"
+    title = f"Grad-CAM - {model_name} ({mode})"
     if mode == "failures":
         title += "  ·  most confidently WRONG per true class"
     fig.suptitle(title, fontweight="bold")
