@@ -1,0 +1,19 @@
+# --- Data pipeline (installed now) ---
+yfinance>=0.2.40
+mplfinance>=0.12.10b0
+pandas>=2.0
+numpy>=1.26
+matplotlib>=3.8
+pyyaml>=6.0
+scikit-learn>=1.4
+tqdm>=4.66
+
+# --- Showcase / interactive demo (report, slides, video) ---
+plotly>=5.20
+
+# --- Testing ---
+pytest>=8.0
+
+# --- Training (added later, when we reach the training stage) ---
+# torch>=2.2
+# torchvision>=0.17

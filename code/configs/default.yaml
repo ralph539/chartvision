@@ -1,0 +1,141 @@
+# ChartVision configuration. Single source of truth for paths, data, and hyper-parameters.
+# Everything that affects results lives here so runs are reproducible.
+
+seed: 42
+
+paths:
+  raw_dir: data/raw            # cached OHLC CSVs from yfinance
+  processed_dir: data/processed # rendered candlestick PNGs, one subfolder per class
+  reports_dir: reports
+  figures_dir: reports/figures
+  checkpoints_dir: checkpoints
+
+data:
+  # Full ticker universe (~30). For the first smoke test we only use the first 5.
+  tickers:
+    - AAPL
+    - MSFT
+    - SPY
+    - NVDA
+    - JPM
+    - GOOGL
+    - AMZN
+    - TSLA
+    - META
+    - QQQ
+    - IWM
+    - DIA
+    - BAC
+    - GS
+    - MS
+    - XLF
+    - XLE
+    - XLK
+    - XLV
+    - XLI
+    - GLD
+    - SLV
+    - USO
+    - KO
+    - PEP
+    - WMT
+    - DIS
+    - INTC
+    - AMD
+    - CSCO
+  smoke_test_tickers: [AAPL, MSFT, SPY, NVDA, JPM]  # used while developing the pipeline
+  start_date: "2010-01-01"
+  end_date: "2024-12-31"
+  interval: "1d"
+
+# Rolling-window settings shared by every labeler.
+window:
+  size: 60          # trading days per pattern window
+  stride: 5         # step between consecutive windows when scanning a ticker
+
+# Temporal split (by anchor date of each window). No random splitting.
+splits:
+  train_end: "2021-12-31"   # train: anchor date <= this
+  val_end: "2022-12-31"     # val: train_end < anchor date <= this; test: after this
+
+# Class names (folder names under processed_dir).
+classes:
+  - head_and_shoulders
+  - double_top
+  - double_bottom
+  - bull_flag
+  - no_pattern
+
+# Geometric thresholds for the rule-based labelers (documented per pattern).
+labelers:
+  double_top:
+    peak_tolerance: 0.015     # tightened: two tops within 1.5% of each other
+    min_trough_drop: 0.07     # tightened: trough >=7% below the lower top
+    min_peak_separation: 12   # tightened: >=12 bars between the two tops
+    top_margin: 0.01          # tightened: tops within 1% of the window's highest high
+    confirm_drop: 0.04        # tightened: >=4% reversal drop after the 2nd top
+  double_bottom:
+    trough_tolerance: 0.015
+    min_peak_rise: 0.07
+    min_trough_separation: 12
+    bottom_margin: 0.01
+    confirm_rise: 0.04
+  head_and_shoulders:
+    shoulder_tolerance: 0.03  # the two shoulders within +/-3% of each other
+    head_prominence: 0.03     # the head must be >=3% above both shoulders
+    min_separation: 7         # min bars between consecutive peaks
+    top_margin: 0.02          # the head must be (within 2% of) the window's highest high
+  bull_flag:
+    pole_gain: 0.10           # the pole is a >=10% rise...
+    pole_max_len: 15          # ...within this many bars
+    flag_min_len: 8           # the flag (consolidation) lasts at least this many bars
+    flag_max_len: 25          # ...and at most this many
+    flag_max_range: 0.07      # the flag stays within a ~7% high-low band (tight channel)
+    flag_max_pullback: 0.5    # the flag retraces at most 50% of the pole
+
+# Chart rendering settings.
+render:
+  image_size: 224             # output PNG is image_size x image_size
+  dpi: 100
+  up_color: "#22E36A"         # vivid green up-candle
+  down_color: "#FF3B5C"       # vivid red/pink down-candle
+  wick_color: "#C7D2FE"       # soft light wick
+  bg_top: "#0A0E1A"           # gradient background (top)
+  bg_bottom: "#1B1233"        # gradient background (bottom, subtle purple)
+  glow: true                  # subtle glow on candles (consistent across all images -> ML-safe)
+  glow_layers: 3
+  glow_max_linewidth: 6.0
+  glow_alpha: 0.10
+  candle_width: 0.7           # fraction of the per-bar slot used by the candle body
+
+# Dataset balance targets.
+dataset:
+  target_per_positive_class: 1500
+  negative_class_cap_factor: 2.0   # no_pattern <= 2x largest positive class
+
+# Training hyper-parameters.
+training:
+  baseline:
+    image_size: 128          # baseline trains at 128 for speed on CPU (PNGs stay 224 on disk)
+    batch_size: 32
+    epochs: 30
+    lr: 0.001
+    weight_decay: 0.0001
+    early_stopping_patience: 6
+    num_workers: 2
+  resnet18:
+    image_size: 160          # 160 keeps it fast on CPU; pretrained features still transfer well
+    batch_size: 32
+    epochs: 25
+    lr: 0.0005
+    weight_decay: 0.0001
+    early_stopping_patience: 6
+    num_workers: 2
+  resnet18_linear:           # linear probe: freeze backbone, only train FC -- much fewer params,
+    image_size: 160          # so overfitting risk is minimal on this small dataset
+    batch_size: 32
+    epochs: 25
+    lr: 0.002                # higher LR is fine since we only train ~2.5k params
+    weight_decay: 0.0001
+    early_stopping_patience: 6
+    num_workers: 2
