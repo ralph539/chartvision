@@ -21,6 +21,7 @@ compared: a small from-scratch CNN and a ResNet18 with transfer learning.
 
 ```
 code/      source: data pipeline, models, training, evaluation, Grad-CAM, tests
+figures/   figures used in the report and slides
 report/    final report (PDF)
 slides/    final presentation (PDF)
 ```
